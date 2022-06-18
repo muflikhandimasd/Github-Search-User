@@ -21,9 +21,10 @@ class UserCubit extends Cubit<UserState> {
     var test = search.text == "" ? '7897878' : search.text;
     try {
       int page = 1;
+      int perPage = 14;
 
       var request = await http.get(Uri.parse(
-          'https://api.github.com/search/users?q=$test&page=$page&per_page=14'));
+          'https://api.github.com/search/users?q=$test&page=$page&per_page=$perPage'));
 
       final json = jsonDecode(request.body);
 
@@ -31,12 +32,12 @@ class UserCubit extends Cubit<UserState> {
 
       if (request.statusCode == 200) {
         List items = json['items'];
-        // log('Items : $items');
+
         List<User> users = items.map((e) => User.fromJson(e)).toList();
-        // log('Users : $users');
+
         if (state is UserLoaded) {
           final s = state as UserLoaded;
-          // log("data loaded $state");7
+
           emit(s.loaded(
             users: users,
             totalCount: json['total_count'],
@@ -61,16 +62,14 @@ class UserCubit extends Cubit<UserState> {
       try {
         log('State Page : ${st.page}');
         int page = 1 + st.page;
-        // int page = 2;
+        int perPage = 14;
 
         log('Page Sekarang : $page');
 
         var request = await http.get(Uri.parse(
-            'https://api.github.com/search/users?q=$test&page=$page&per_page=6'));
+            'https://api.github.com/search/users?q=$test&page=$page&per_page=$perPage'));
 
         final json = jsonDecode(request.body);
-
-        // log('More User $json');
 
         if (request.statusCode == 200) {
           List items = json['items'];

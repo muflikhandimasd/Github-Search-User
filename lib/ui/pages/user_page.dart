@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:git_search/cubit/user_cubit.dart';
@@ -109,16 +107,12 @@ class UserPage extends StatelessWidget {
 
   Widget _bodyContent(BuildContext context) {
     return BlocBuilder<UserCubit, UserState>(builder: (_, state) {
-      if (state == UserLoaded.init()) {
-        return const Center(
-          child: Text('Please enter a search term'),
-        );
-      }
+      int perPage = 14;
       if (state is UserLoaded) {
         if (state.list.isEmpty) {
           return const Center(child: Text('User Not Found'));
         }
-        return _bodyLoaded(context, state);
+        return _bodyLoaded(context, state, perPage);
       }
       if (state is UserError) {
         return const Center(
@@ -129,25 +123,27 @@ class UserPage extends StatelessWidget {
     });
   }
 
-  Widget _bodyLoaded(BuildContext context, UserLoaded state) => Expanded(
-        child: SmartRefresher(
-          enablePullDown: false,
-          enablePullUp: state.page != state.totalCount,
-          controller: UserCubit.refreshController,
-          onLoading: () async {
-            await Future.delayed(const Duration(seconds: 5));
-            context.read<UserCubit>().onLoadMoreUser();
+  Widget _bodyLoaded(BuildContext context, UserLoaded state, int perPage) {
+    return Expanded(
+      child: SmartRefresher(
+        enablePullDown: false,
+        enablePullUp: (state.page * perPage) != state.totalCount,
+        controller: UserCubit.refreshController,
+        onLoading: () async {
+          await Future.delayed(const Duration(seconds: 5));
+          context.read<UserCubit>().onLoadMoreUser();
+        },
+        onRefresh: context.read<UserCubit>().onRefresh,
+        child: ListView.builder(
+          itemCount: state.list.length,
+          itemBuilder: (context, index) {
+            var user = state.list[index];
+            return _SearchResultItem(user: user);
           },
-          onRefresh: context.read<UserCubit>().onRefresh,
-          child: ListView.builder(
-            itemCount: state.list.length,
-            itemBuilder: (context, index) {
-              var user = state.list[index];
-              return _SearchResultItem(user: user);
-            },
-          ),
         ),
-      );
+      ),
+    );
+  }
 }
 
 // Search Result Item
