@@ -17,26 +17,26 @@ class UserCubit extends Cubit<UserState> {
   static final refreshController = RefreshController();
   static final TextEditingController search = TextEditingController();
 
-  void getUserGithub({String text = 'm'}) async {
-    log(search.text);
+  void getUserGithub() async {
+    var test = search.text == "" ? '7897878' : search.text;
     try {
       int page = 1;
 
       var request = await http.get(Uri.parse(
-          'https://api.github.com/search/users?q=$text&page=$page&per_page=20'));
+          'https://api.github.com/search/users?q=$test&page=$page&per_page=6'));
 
       final json = jsonDecode(request.body);
 
-      log('Get User $json');
+      // log('Get User $json');
 
       if (request.statusCode == 200) {
         List items = json['items'];
-        log('Items : $items');
+        // log('Items : $items');
         List<User> users = items.map((e) => User.fromJson(e)).toList();
-        log('Users : $users');
+        // log('Users : $users');
         if (state is UserLoaded) {
           final s = state as UserLoaded;
-          log("data loaded $state");
+          // log("data loaded $state");7
           emit(s.loaded(
             users: users,
             totalCount: json['total_count'],
@@ -54,28 +54,33 @@ class UserCubit extends Cubit<UserState> {
   }
 
   void onLoadMoreUser() async {
-    log('method onLoad ');
+    var test = search.text == "" ? '7897878' : search.text;
     if (state is UserLoaded) {
       var st = state as UserLoaded;
-      log('onLoadMore : $st');
+
       try {
+        log('State Page : ${st.page}');
         int page = 1 + st.page;
-        log('Page : $page');
+        // int page = 2;
+
+        log('Page Sekarang : $page');
 
         var request = await http.get(Uri.parse(
-            'https://api.github.com/search/users?q=${search.text}&page=$page&per_page=20'));
+            'https://api.github.com/search/users?q=$test&page=$page&per_page=6'));
 
         final json = jsonDecode(request.body);
 
-        log('Get User $json');
+        // log('More User $json');
 
         if (request.statusCode == 200) {
           List items = json['items'];
           List<User> users = items.map((e) => User.fromJson(e)).toList();
-
+          List oldData = st.list;
+          users = [...oldData, ...users];
           final s = state as UserLoaded;
           emit(s.loaded(
             users: users,
+            page: page,
             totalCount: json['total_count'],
           ));
 
@@ -84,7 +89,7 @@ class UserCubit extends Cubit<UserState> {
           emit(UserError());
         }
       } catch (e) {
-        log(e.toString());
+        log('Error : $e');
       } finally {
         refreshController.refreshCompleted();
       }

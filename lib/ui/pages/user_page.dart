@@ -14,167 +14,107 @@ class UserPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 70,
-          bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(61.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                    child: Text(
-                      'Github Search User',
-                      style: GoogleFonts.poppins(
-                          fontSize: 18, fontWeight: FontWeight.w600),
-                    ),
+      appBar: AppBar(
+        elevation: 0,
+        toolbarHeight: 70,
+        bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(40.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: Text(
+                    'Github Search User',
+                    style: GoogleFonts.poppins(
+                        fontSize: 18, fontWeight: FontWeight.w600),
                   ),
-                  Container(
-                      height: 36.0,
-                      width: double.infinity,
-                      margin:
-                          const EdgeInsets.only(left: 16, right: 56, bottom: 8),
-                      child: Row(
-                        children: [
-                          Expanded(
-                              child: Container(
-                                  height: double.infinity,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: Colors.black.withOpacity(0.20),
-                                      )),
-                                  child: BlocBuilder<UserCubit, UserState>(
-                                      builder: (context, state) {
-                                    if (state is UserInitial) {
-                                      return Row(
-                                        children: [
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: double.infinity,
-                                              child: Center(
-                                                  child: TextField(
-                                                onSubmitted: (value) {
-                                                  context
-                                                      .read<UserCubit>()
-                                                      .getUserGithub();
-                                                },
-                                                controller: UserCubit.search,
-                                                decoration:
-                                                    const InputDecoration(
-                                                        hintText: 'Cari...',
-                                                        enabledBorder:
-                                                            InputBorder.none,
-                                                        border:
-                                                            InputBorder.none,
-                                                        focusedBorder:
-                                                            InputBorder.none,
-                                                        errorBorder:
-                                                            InputBorder.none),
-                                              )),
+                ),
+                Container(
+                    height: 36.0,
+                    width: double.infinity,
+                    margin:
+                        const EdgeInsets.only(left: 16, right: 8, bottom: 8),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: Container(
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: Colors.black.withOpacity(0.20),
+                                    )),
+                                child: BlocBuilder<UserCubit, UserState>(
+                                    builder: (context, state) {
+                                  if (state is UserLoaded) {
+                                    return Row(
+                                      children: [
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Expanded(
+                                          child: Center(
+                                            child: TextField(
+                                              onSubmitted: (value) {
+                                                context
+                                                    .read<UserCubit>()
+                                                    .getUserGithub();
+                                              },
+                                              controller: UserCubit.search,
+                                              decoration: const InputDecoration(
+                                                  hintText: 'Cari...',
+                                                  enabledBorder:
+                                                      InputBorder.none,
+                                                  border: InputBorder.none,
+                                                  focusedBorder:
+                                                      InputBorder.none,
+                                                  errorBorder:
+                                                      InputBorder.none),
                                             ),
                                           ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              context
-                                                  .read<UserCubit>()
-                                                  .getUserGithub();
-                                            },
-                                            child: const Icon(
-                                              Icons.search,
-                                              color: Color(0xff666666),
-                                            ),
+                                        ),
+                                        GestureDetector(
+                                          child: const Icon(
+                                            Icons.search,
+                                            color: Color(0xff666666),
                                           ),
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
-                                        ],
-                                      );
-                                    }
-                                    if (state is UserLoaded) {
-                                      return Row(
-                                        children: [
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
-                                          Expanded(
-                                            child: SizedBox(
-                                              height: double.infinity,
-                                              child: Center(
-                                                child: TextField(
-                                                  onSubmitted: (value) {
-                                                    context
-                                                        .read<UserCubit>()
-                                                        .getUserGithub();
-                                                  },
-                                                  controller: UserCubit.search,
-                                                  decoration:
-                                                      const InputDecoration(
-                                                          hintText: 'Cari...',
-                                                          enabledBorder:
-                                                              InputBorder.none,
-                                                          border:
-                                                              InputBorder.none,
-                                                          focusedBorder:
-                                                              InputBorder.none,
-                                                          errorBorder:
-                                                              InputBorder.none),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            child: const Icon(
-                                              Icons.search,
-                                              color: Color(0xff666666),
-                                            ),
-                                            onTap: () {
-                                              context
-                                                  .read<UserCubit>()
-                                                  .getUserGithub();
-                                            },
-                                          ),
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
-                                        ],
-                                      );
-                                    }
-                                    return const SizedBox.shrink();
-                                  }))),
-                        ],
-                      )),
-                ],
-              )),
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
-        ),
-        body: SizedBox(
-          width: MediaQuery.of(context).size.width,
-          child: SizedBox(
-            child: _bodyContent(context),
-          ),
-        ));
+                                          onTap: () {
+                                            context
+                                                .read<UserCubit>()
+                                                .getUserGithub();
+                                          },
+                                        ),
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                  return const SizedBox.shrink();
+                                }))),
+                      ],
+                    )),
+              ],
+            )),
+        // automaticallyImplyLeading: false,
+        backgroundColor: Colors.white,
+      ),
+      body: Column(
+        children: [_bodyContent(context)],
+      ),
+    );
   }
 
   Widget _bodyContent(BuildContext context) {
     return BlocBuilder<UserCubit, UserState>(builder: (_, state) {
-      log('State : $state');
-      if (state is UserInitial) {
-        return const Center(
-          child: Text(''),
-        );
-      }
       if (state is UserLoaded) {
         return _bodyLoaded(context, state);
       }
       if (state is UserError) {
-        return const Center(
-          child: Text('Error'),
+        return Center(
+          child: Text('Error : ${state.toString()}'),
         );
       }
       return const SizedBox.shrink();
@@ -182,20 +122,24 @@ class UserPage extends StatelessWidget {
   }
 
   Widget _bodyLoaded(BuildContext context, UserLoaded state) => Expanded(
-          child: SmartRefresher(
-        enablePullDown: true,
-        enablePullUp: true,
-        controller: UserCubit.refreshController,
-        onLoading: context.read<UserCubit>().onLoadMoreUser,
-        onRefresh: context.read<UserCubit>().onRefresh,
-        child: ListView.builder(
-          itemCount: state.list.length,
-          itemBuilder: (context, index) {
-            var user = state.list[index];
-            return _SearchResultItem(user: user);
+        child: SmartRefresher(
+          enablePullDown: false,
+          enablePullUp: true,
+          controller: UserCubit.refreshController,
+          onLoading: () async {
+            await Future.delayed(const Duration(seconds: 5));
+            context.read<UserCubit>().onLoadMoreUser();
           },
+          onRefresh: context.read<UserCubit>().onRefresh,
+          child: ListView.builder(
+            itemCount: state.list.length,
+            itemBuilder: (context, index) {
+              var user = state.list[index];
+              return _SearchResultItem(user: user);
+            },
+          ),
         ),
-      ));
+      );
 }
 
 // Search Result Item

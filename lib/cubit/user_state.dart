@@ -3,8 +3,6 @@ part of 'user_cubit.dart';
 @immutable
 abstract class UserState {}
 
-class UserInitial extends UserState {}
-
 class UserLoaded extends UserState {
   final int page;
   final int totalCount;
@@ -15,7 +13,7 @@ class UserLoaded extends UserState {
       {required this.list,
       this.page = 1,
       this.totalCount = 1,
-      this.perPage = 20});
+      this.perPage = 8});
 
   UserLoaded.init() : this._(list: []);
 
