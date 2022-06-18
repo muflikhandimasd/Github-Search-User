@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -24,27 +23,19 @@ class UserCubit extends Cubit<UserState> {
     var test = search.text;
     try {
       int page = 1;
-
       var request = await http.get(Uri.parse(
           'https://api.github.com/search/users?q=$test&page=$page&per_page=$perPage'));
-
       final json = jsonDecode(request.body);
-
-      // log('Get User $json');
-
       if (request.statusCode == 200) {
         List items = json['items'];
-
         List<User> users = items.map((e) => User.fromJson(e)).toList();
-
         emit(UserLoaded._(
             list: users,
             totalCount: json['total_count'],
             perPage: perPage,
             page: page));
       }
-    } catch (e, stack) {
-      log('Error: $e , Stack : $stack');
+    } catch (_) {
       emit(UserError._());
     } finally {
       refreshController.loadComplete();
@@ -55,18 +46,11 @@ class UserCubit extends Cubit<UserState> {
     var test = search.text;
     if (state is UserLoaded) {
       var st = state as UserLoaded;
-
       try {
-        // log('State Page : ${st.page}');
         int page = 1 + st.page;
-        // log('PerPage sekarang : ${st.perPage}');
-        // log('Page Sekarang : $page');
-
         var request = await http.get(Uri.parse(
             'https://api.github.com/search/users?q=$test&page=$page&per_page=${st.perPage}'));
-
         final json = jsonDecode(request.body);
-
         if (request.statusCode == 200) {
           List items = json['items'];
           List<User> users = items.map((e) => User.fromJson(e)).toList();
@@ -80,8 +64,7 @@ class UserCubit extends Cubit<UserState> {
             totalCount: json['total_count'],
           ));
         }
-      } catch (e) {
-        log('Error : $e');
+      } catch (_) {
         emit(UserError._());
       } finally {
         refreshController.loadComplete();

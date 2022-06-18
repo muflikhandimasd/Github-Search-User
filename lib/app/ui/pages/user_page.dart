@@ -43,7 +43,6 @@ class UserPage extends StatelessWidget {
                                     )),
                                 child: BlocBuilder<UserCubit, UserState>(
                                     builder: (context, state) {
-                                  // log('State sekarang $state');
                                   if (state is UserInitial) {
                                     return _searchField(context);
                                   }

@@ -17,8 +17,6 @@ class UserLoaded extends UserState {
       this.totalCount = 1,
       this.perPage = 14});
 
-  UserLoaded.init() : this._(list: []);
-
   UserLoaded loaded(
       {required List<User> users, int? perPage, int? totalCount, int? page}) {
     return UserLoaded._(
