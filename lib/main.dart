@@ -12,13 +12,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<UserCubit>(create: (_) => UserCubit()..init()),
-        ],
-        child: const MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: UserPage(),
-        ));
+    return BlocProvider<UserCubit>(
+      create: (_) => UserCubit()..init(),
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: UserPage(),
+      ),
+    );
   }
 }
