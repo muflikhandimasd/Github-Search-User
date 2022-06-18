@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:git_search/cubit/user_cubit.dart';
@@ -46,49 +48,12 @@ class UserPage extends StatelessWidget {
                                     )),
                                 child: BlocBuilder<UserCubit, UserState>(
                                     builder: (context, state) {
+                                  log('State sekarang $state');
+                                  if (state is UserInitial) {
+                                    return _searchField(context);
+                                  }
                                   if (state is UserLoaded) {
-                                    return Row(
-                                      children: [
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
-                                        Expanded(
-                                          child: Center(
-                                            child: TextField(
-                                              onSubmitted: (value) {
-                                                context
-                                                    .read<UserCubit>()
-                                                    .getUserGithub();
-                                              },
-                                              controller: UserCubit.search,
-                                              decoration: const InputDecoration(
-                                                  hintText: 'Cari...',
-                                                  enabledBorder:
-                                                      InputBorder.none,
-                                                  border: InputBorder.none,
-                                                  focusedBorder:
-                                                      InputBorder.none,
-                                                  errorBorder:
-                                                      InputBorder.none),
-                                            ),
-                                          ),
-                                        ),
-                                        GestureDetector(
-                                          child: const Icon(
-                                            Icons.search,
-                                            color: Color(0xff666666),
-                                          ),
-                                          onTap: () {
-                                            context
-                                                .read<UserCubit>()
-                                                .getUserGithub();
-                                          },
-                                        ),
-                                        const SizedBox(
-                                          width: 8,
-                                        ),
-                                      ],
-                                    );
+                                    return _searchField(context);
                                   }
                                   return const SizedBox.shrink();
                                 }))),
@@ -96,7 +61,6 @@ class UserPage extends StatelessWidget {
                     )),
               ],
             )),
-        // automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
       ),
       body: Column(
@@ -105,14 +69,57 @@ class UserPage extends StatelessWidget {
     );
   }
 
+  Widget _searchField(BuildContext context) {
+    return Row(
+      children: [
+        const SizedBox(
+          width: 8,
+        ),
+        Expanded(
+          child: Center(
+            child: TextField(
+              onSubmitted: (value) {
+                context.read<UserCubit>().getUserGithub();
+              },
+              controller: UserCubit.search,
+              decoration: const InputDecoration(
+                  hintText: 'Cari...',
+                  enabledBorder: InputBorder.none,
+                  border: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  errorBorder: InputBorder.none),
+            ),
+          ),
+        ),
+        GestureDetector(
+          child: const Icon(
+            Icons.search,
+            color: Color(0xff666666),
+          ),
+          onTap: () {
+            context.read<UserCubit>().getUserGithub();
+          },
+        ),
+        const SizedBox(
+          width: 8,
+        ),
+      ],
+    );
+  }
+
   Widget _bodyContent(BuildContext context) {
     return BlocBuilder<UserCubit, UserState>(builder: (_, state) {
-      int perPage = 14;
+      if (state is UserInitial) {
+        return const Center(
+          child: Text('Please enter a text '),
+        );
+      }
+
       if (state is UserLoaded) {
         if (state.list.isEmpty) {
           return const Center(child: Text('User Not Found'));
         }
-        return _bodyLoaded(context, state, perPage);
+        return _bodyLoaded(context, state, state.perPage);
       }
       if (state is UserError) {
         return const Center(
@@ -127,7 +134,7 @@ class UserPage extends StatelessWidget {
     return Expanded(
       child: SmartRefresher(
         enablePullDown: false,
-        enablePullUp: (state.page * perPage) != state.totalCount,
+        enablePullUp: (state.page * state.perPage) != state.totalCount,
         controller: UserCubit.refreshController,
         onLoading: () async {
           await Future.delayed(const Duration(seconds: 5));

@@ -12,16 +12,21 @@ import 'dart:convert';
 part 'user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
-  UserCubit() : super(UserLoaded.init());
+  UserCubit() : super(UserInitial());
 
   static final refreshController = RefreshController();
   static final TextEditingController search = TextEditingController();
+  int perPage = 14;
+
+  void init() {
+    search.text = '';
+    getUserGithub();
+  }
 
   void getUserGithub() async {
-    var test = search.text == "" ? '7897878' : search.text;
+    var test = search.text;
     try {
       int page = 1;
-      int perPage = 14;
 
       var request = await http.get(Uri.parse(
           'https://api.github.com/search/users?q=$test&page=$page&per_page=$perPage'));
@@ -35,39 +40,29 @@ class UserCubit extends Cubit<UserState> {
 
         List<User> users = items.map((e) => User.fromJson(e)).toList();
 
-        if (state is UserLoaded) {
-          final s = state as UserLoaded;
-
-          emit(s.loaded(
-            users: users,
-            totalCount: json['total_count'],
-          ));
-        }
-      } else {
-        emit((state as UserLoaded)
-            .loaded(users: [], totalCount: json['total_count']));
+        emit(UserLoaded._(list: users, totalCount: json['total_count']));
       }
     } catch (e, stack) {
       log('Error: $e , Stack : $stack');
+      emit(UserError());
     } finally {
       refreshController.loadComplete();
     }
   }
 
   void onLoadMoreUser() async {
-    var test = search.text == "" ? '7897878' : search.text;
+    var test = search.text;
     if (state is UserLoaded) {
       var st = state as UserLoaded;
 
       try {
         log('State Page : ${st.page}');
         int page = 1 + st.page;
-        int perPage = 14;
 
         log('Page Sekarang : $page');
 
         var request = await http.get(Uri.parse(
-            'https://api.github.com/search/users?q=$test&page=$page&per_page=$perPage'));
+            'https://api.github.com/search/users?q=$test&page=$page&per_page=${st.perPage}'));
 
         final json = jsonDecode(request.body);
 
@@ -82,12 +77,10 @@ class UserCubit extends Cubit<UserState> {
             page: page,
             totalCount: json['total_count'],
           ));
-        } else {
-          emit((state as UserLoaded)
-              .loaded(users: [], totalCount: json['total_count']));
         }
       } catch (e) {
         log('Error : $e');
+        emit(UserError());
       } finally {
         refreshController.loadComplete();
       }

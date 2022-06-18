@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
-          BlocProvider<UserCubit>(create: (_) => UserCubit()..getUserGithub()),
+          BlocProvider<UserCubit>(create: (_) => UserCubit()..init()),
         ],
         child: const MaterialApp(
           debugShowCheckedModeBanner: false,
