@@ -1,13 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:git_search/cubit/user_cubit.dart';
-import 'package:git_search/models/user_model.dart';
-import 'package:git_search/ui/theme/font.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'package:url_launcher/url_launcher.dart';
+
+import '../../app.dart';
 
 class UserPage extends StatelessWidget {
   const UserPage({Key? key}) : super(key: key);
@@ -120,7 +116,6 @@ class UserPage extends StatelessWidget {
           ),
         );
       }
-
       if (state is UserLoaded) {
         if (state.list.isEmpty) {
           return Center(
@@ -154,57 +149,10 @@ class UserPage extends StatelessWidget {
           itemCount: state.list.length,
           itemBuilder: (context, index) {
             var user = state.list[index];
-            return _SearchResultItem(user: user);
+            return SearchResultItem(user: user);
           },
         ),
       ),
     );
   }
-}
-
-// Search Result Item
-class _SearchResultItem extends StatelessWidget {
-  final User user;
-  const _SearchResultItem({Key? key, required this.user}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        child: Image.network(
-          user.avatarUrl!,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null &&
-                        loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded /
-                        loadingProgress.expectedTotalBytes!
-                    : null,
-              ),
-            );
-          },
-          errorBuilder: (_, object, stackTrace) => Material(
-            borderRadius: BorderRadius.circular(8),
-            child: Text(
-              'Image not Available',
-              style: ThemeFont.defFont.copyWith(fontSize: 12),
-            ),
-          ),
-        ),
-      ),
-      title: Text(
-        user.login!,
-        style: ThemeFont.defFont.copyWith(fontSize: 16),
-      ),
-      onTap: () async {
-        final url = Uri.parse(user.htmlUrl!);
-        if (await canLaunchUrl(url)) {
-          await launchUrl(url);
-        }
-      },
-    );
-  }
-  // Search Result Item
 }
