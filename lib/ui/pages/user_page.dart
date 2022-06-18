@@ -109,12 +109,20 @@ class UserPage extends StatelessWidget {
 
   Widget _bodyContent(BuildContext context) {
     return BlocBuilder<UserCubit, UserState>(builder: (_, state) {
+      if (state == UserLoaded.init()) {
+        return const Center(
+          child: Text('Please enter a search term'),
+        );
+      }
       if (state is UserLoaded) {
+        if (state.list.isEmpty) {
+          return const Center(child: Text('User Not Found'));
+        }
         return _bodyLoaded(context, state);
       }
       if (state is UserError) {
-        return Center(
-          child: Text('Error : ${state.toString()}'),
+        return const Center(
+          child: Text('Error '),
         );
       }
       return const SizedBox.shrink();
@@ -124,7 +132,7 @@ class UserPage extends StatelessWidget {
   Widget _bodyLoaded(BuildContext context, UserLoaded state) => Expanded(
         child: SmartRefresher(
           enablePullDown: false,
-          enablePullUp: true,
+          enablePullUp: state.page != state.totalCount,
           controller: UserCubit.refreshController,
           onLoading: () async {
             await Future.delayed(const Duration(seconds: 5));

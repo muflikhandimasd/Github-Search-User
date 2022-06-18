@@ -23,7 +23,7 @@ class UserCubit extends Cubit<UserState> {
       int page = 1;
 
       var request = await http.get(Uri.parse(
-          'https://api.github.com/search/users?q=$test&page=$page&per_page=6'));
+          'https://api.github.com/search/users?q=$test&page=$page&per_page=14'));
 
       final json = jsonDecode(request.body);
 
@@ -42,14 +42,14 @@ class UserCubit extends Cubit<UserState> {
             totalCount: json['total_count'],
           ));
         }
-        refreshController.loadComplete();
       } else {
-        emit(UserError());
+        emit((state as UserLoaded)
+            .loaded(users: [], totalCount: json['total_count']));
       }
     } catch (e, stack) {
       log('Error: $e , Stack : $stack');
     } finally {
-      refreshController.refreshCompleted();
+      refreshController.loadComplete();
     }
   }
 
@@ -83,15 +83,14 @@ class UserCubit extends Cubit<UserState> {
             page: page,
             totalCount: json['total_count'],
           ));
-
-          refreshController.loadComplete();
         } else {
-          emit(UserError());
+          emit((state as UserLoaded)
+              .loaded(users: [], totalCount: json['total_count']));
         }
       } catch (e) {
         log('Error : $e');
       } finally {
-        refreshController.refreshCompleted();
+        refreshController.loadComplete();
       }
     }
   }
