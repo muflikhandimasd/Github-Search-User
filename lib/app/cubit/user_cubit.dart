@@ -45,7 +45,7 @@ class UserCubit extends Cubit<UserState> {
       }
     } catch (e, stack) {
       log('Error: $e , Stack : $stack');
-      emit(UserError());
+      emit(UserError._());
     } finally {
       refreshController.loadComplete();
     }
@@ -82,7 +82,7 @@ class UserCubit extends Cubit<UserState> {
         }
       } catch (e) {
         log('Error : $e');
-        emit(UserError());
+        emit(UserError._());
       } finally {
         refreshController.loadComplete();
       }

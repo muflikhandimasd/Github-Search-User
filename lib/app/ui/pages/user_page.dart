@@ -50,6 +50,9 @@ class UserPage extends StatelessWidget {
                                   if (state is UserLoaded) {
                                     return _searchField(context);
                                   }
+                                  if (state is UserError) {
+                                    return _searchField(context);
+                                  }
                                   return const SizedBox.shrink();
                                 }))),
                       ],
@@ -124,8 +127,11 @@ class UserPage extends StatelessWidget {
         return _bodyLoaded(context, state);
       }
       if (state is UserError) {
-        return const Center(
-          child: Text('Error'),
+        return Center(
+          child: Text(
+            'Error',
+            style: ThemeFont.defFont.copyWith(fontSize: 16),
+          ),
         );
       }
       return const SizedBox.shrink();

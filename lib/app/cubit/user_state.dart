@@ -29,4 +29,7 @@ class UserLoaded extends UserState {
   }
 }
 
-class UserError extends UserState {}
+class UserError extends UserState {
+  final List<User> list;
+  UserError._({this.list = const []});
+}
