@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-
 import '../../app.dart';
 
 class UserPage extends StatelessWidget {
@@ -75,6 +74,7 @@ class UserPage extends StatelessWidget {
         Expanded(
           child: Center(
             child: TextField(
+              cursorColor: Colors.black,
               style: ThemeFont.defFont.copyWith(fontSize: 12),
               onSubmitted: (value) {
                 context.read<UserCubit>().getUserGithub();

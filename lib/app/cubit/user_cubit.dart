@@ -1,14 +1,9 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
 import '../app.dart';
 
 part 'user_state.dart';
