@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../app.dart';
 
@@ -23,8 +22,8 @@ class UserPage extends StatelessWidget {
                       const EdgeInsets.only(left: 16, right: 16, bottom: 16),
                   child: Text(
                     'Github Search User',
-                    style: GoogleFonts.poppins(
-                        fontSize: 18, fontWeight: FontWeight.w600),
+                    style: ThemeFont.defFont
+                        .copyWith(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Container(
@@ -126,7 +125,7 @@ class UserPage extends StatelessWidget {
       }
       if (state is UserError) {
         return const Center(
-          child: Text('Error '),
+          child: Text('Error'),
         );
       }
       return const SizedBox.shrink();
