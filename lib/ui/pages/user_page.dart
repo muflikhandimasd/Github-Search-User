@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:git_search/cubit/user_cubit.dart';
 import 'package:git_search/models/user_model.dart';
+import 'package:git_search/ui/theme/font.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -48,7 +49,7 @@ class UserPage extends StatelessWidget {
                                     )),
                                 child: BlocBuilder<UserCubit, UserState>(
                                     builder: (context, state) {
-                                  log('State sekarang $state');
+                                  // log('State sekarang $state');
                                   if (state is UserInitial) {
                                     return _searchField(context);
                                   }
@@ -78,12 +79,14 @@ class UserPage extends StatelessWidget {
         Expanded(
           child: Center(
             child: TextField(
+              style: ThemeFont.defFont.copyWith(fontSize: 12),
               onSubmitted: (value) {
                 context.read<UserCubit>().getUserGithub();
               },
               controller: UserCubit.search,
-              decoration: const InputDecoration(
-                  hintText: 'Cari...',
+              decoration: InputDecoration(
+                  hintText: 'Search...',
+                  hintStyle: ThemeFont.defFont.copyWith(fontSize: 12),
                   enabledBorder: InputBorder.none,
                   border: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -110,16 +113,21 @@ class UserPage extends StatelessWidget {
   Widget _bodyContent(BuildContext context) {
     return BlocBuilder<UserCubit, UserState>(builder: (_, state) {
       if (state is UserInitial) {
-        return const Center(
-          child: Text('Please enter a text '),
+        return Center(
+          child: Text(
+            'Please enter a text ',
+            style: ThemeFont.defFont.copyWith(fontSize: 16),
+          ),
         );
       }
 
       if (state is UserLoaded) {
         if (state.list.isEmpty) {
-          return const Center(child: Text('User Not Found'));
+          return Center(
+              child: Text('User Not Found',
+                  style: ThemeFont.defFont.copyWith(fontSize: 16)));
         }
-        return _bodyLoaded(context, state, state.perPage);
+        return _bodyLoaded(context, state);
       }
       if (state is UserError) {
         return const Center(
@@ -130,11 +138,12 @@ class UserPage extends StatelessWidget {
     });
   }
 
-  Widget _bodyLoaded(BuildContext context, UserLoaded state, int perPage) {
+  Widget _bodyLoaded(BuildContext context, UserLoaded state) {
     return Expanded(
       child: SmartRefresher(
         enablePullDown: false,
-        enablePullUp: (state.page * state.perPage) != state.totalCount,
+        enablePullUp: (((state.page * state.perPage) != state.totalCount) &&
+            (state.page * state.perPage) < state.totalCount),
         controller: UserCubit.refreshController,
         onLoading: () async {
           await Future.delayed(const Duration(seconds: 5));
@@ -178,11 +187,17 @@ class _SearchResultItem extends StatelessWidget {
           },
           errorBuilder: (_, object, stackTrace) => Material(
             borderRadius: BorderRadius.circular(8),
-            child: const Text('Image not Available'),
+            child: Text(
+              'Image not Available',
+              style: ThemeFont.defFont.copyWith(fontSize: 12),
+            ),
           ),
         ),
       ),
-      title: Text(user.login!),
+      title: Text(
+        user.login!,
+        style: ThemeFont.defFont.copyWith(fontSize: 16),
+      ),
       onTap: () async {
         final url = Uri.parse(user.htmlUrl!);
         if (await canLaunchUrl(url)) {

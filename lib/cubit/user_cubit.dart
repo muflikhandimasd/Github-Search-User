@@ -40,7 +40,11 @@ class UserCubit extends Cubit<UserState> {
 
         List<User> users = items.map((e) => User.fromJson(e)).toList();
 
-        emit(UserLoaded._(list: users, totalCount: json['total_count']));
+        emit(UserLoaded._(
+            list: users,
+            totalCount: json['total_count'],
+            perPage: perPage,
+            page: page));
       }
     } catch (e, stack) {
       log('Error: $e , Stack : $stack');
@@ -56,10 +60,10 @@ class UserCubit extends Cubit<UserState> {
       var st = state as UserLoaded;
 
       try {
-        log('State Page : ${st.page}');
+        // log('State Page : ${st.page}');
         int page = 1 + st.page;
-
-        log('Page Sekarang : $page');
+        // log('PerPage sekarang : ${st.perPage}');
+        // log('Page Sekarang : $page');
 
         var request = await http.get(Uri.parse(
             'https://api.github.com/search/users?q=$test&page=$page&per_page=${st.perPage}'));
@@ -75,6 +79,7 @@ class UserCubit extends Cubit<UserState> {
           emit(s.loaded(
             users: users,
             page: page,
+            perPage: perPage,
             totalCount: json['total_count'],
           ));
         }
